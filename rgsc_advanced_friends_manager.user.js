@@ -1,19 +1,27 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.3.5b
+// @version         2.3.5b2
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
 // @match           https://*.socialclub.rockstargames.com/*
 // @match           https://socialclub.rockstargames.com/*
-// @grant           none
+// @resource        CSS1 https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
+// @resource        CSS2 https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/src/rgsc_advanced_friends_manager.css
+// @grant           GM_getResourceText
+// @grant           GM_addStyle
 // @require         http://code.jquery.com/jquery-1.12.4.min.js
 // @require         http://code.jquery.com/ui/1.12.1/jquery-ui.js
 // ==/UserScript==
 
 (function() {
     'use strict';
+
+    const css1 = GM_getResourceText("CSS1");
+    const css2 = GM_getResourceText("CSS2");
+    GM_addStyle(css1);
+    GM_addStyle(css2);
 
     var TPLC = 197881;
     var sleepTimes = [0, 0, 5, 10, 15, 20, 30, 45, 60];
@@ -599,8 +607,6 @@
             if(location.pathname.match("^\/member\/.+\/friends$")){
                 console.log("WORKING!");
                 // make a view
-                $("html").prepend("<link rel='stylesheet' href='https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/src/rgsc_advanced_friends_manager.css?2.3.5'>");
-                $("html").prepend("<link rel='stylesheet' href='https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'>");
                 $('body').append("<div id=dialog-confirm></div>");
                 $('body').append('<style>.NavigationTop__wrap__fQdBR { background: black; }</style>');
                 $('body').prepend('<div id=tytusowe_buttony class=m></div>');
