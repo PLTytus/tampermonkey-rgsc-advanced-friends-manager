@@ -1,0 +1,152 @@
+body
+{
+	/* margin: 5px; */
+	/* font-family: "Times New Roman"; */
+	/* font-size: 16px; */
+	/* background: #0F0F0F; */
+	/* color: white; */
+	/* text-align: center; */
+}
+td.myCrew
+{
+	color: green;
+}
+td.killHim
+{
+	color: red;
+}
+.myFriendsTable
+{
+	text-align: center;
+	white-space: nowrap;
+	display: inline-table;
+	width: 100%;
+	border-top: 5px dashed #a5a5a5;
+	border-color: #808080;
+}
+.myFriendsTable:first-child
+{
+	
+	border-top: 0 hidden;
+}
+#fHeader
+{
+	font-weight: bold;
+    text-transform: uppercase;
+}
+#topTopow
+{
+	position: sticky;
+	width: calc(100% + 10px - 6px);
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 3px;
+	margin: -5px;
+	margin-bottom: 5px;
+	background: aliceblue;
+	color: black;
+	text-transform: uppercase;
+}
+#topTopow button
+{
+    margin: 1.5px;
+}
+#tableBox
+{
+	display: inline-grid;
+}
+.divButtons
+{
+    	display: inline-block;
+}
+#dialog-confirmm, div.dialog-confirm
+{
+	position: fixed;
+	top: 0 !important;
+	left: calc(50% - 200px) !important;
+	text-align: left;
+	border-radius: 0 0 10px 10px;
+	border-width: 0 2px 2px 2px !important;
+	border-style: solid !important;
+	overflow: auto;
+	max-height: 95%;
+}
+div.dialog-confirm .ui-dialog-titlebar
+{
+	display: none;
+}
+#dialog-confirmm, div.dialog-confirm, div.dialog-confirm > div
+{
+	background: #e8e8e6;
+	border-color: #1a66ae !important;
+}
+hr.vr
+{
+	display: inline;
+}
+hr.hrOne
+{
+	/* width: 100%; */
+	margin: 5px;
+}
+hr.hrOne:last-of-type
+{
+	display: none;
+}
+span.warn > span, span.okey > span
+{
+    display: none;
+}
+span.warn > span:before, span.okey > span:before
+{
+    content: "\a> ";
+    white-space: pre;
+}
+span.warn > span:after, span.okey > span:after
+{
+    content: " <";
+}
+span.warn, span.okey
+{
+    font-weight: bold;
+}
+span.warn
+{
+	color: red;
+}
+span.okey
+{
+	color: green;
+}
+#statbar
+{
+    position: relative;
+}
+#statbar div.val
+{
+    position: absolute;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    line-height: 1;
+    font-size: 1em;
+    top: calc(50% - 0.5em);
+}
+#statbar div.ui-progressbar-value
+{
+    background: #AF5;
+    border-color: #9F9;
+}
+span.pc_0
+{
+   color: red; 
+}
+span.pc_1
+{
+    color: limegreen;
+}
+span.pc_2
+{
+    color: orange;
+}
