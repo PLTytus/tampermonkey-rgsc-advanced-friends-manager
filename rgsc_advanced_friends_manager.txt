@@ -1,0 +1,27 @@
+RGSC Advanced Friends Manager
+Skrypt pozwala na analizowanie i zarządzanie znajomymi oraz zaproszeniami do znajomych (zarówno tych wysłanych przez nas, jak i tych wysłanych przez innych do nas) na platformie RockstarGames Social Club (RGSC).
+Zarządzanie odbywa się w ramce po prawej stronie, jej obsługa jest bardzo prosta.
+<center><img src=./opisyimg/rgscafm_02.png></center>
+Ramka podzielona jest na dwie główne sekcje: przyciski do zarządzania (nazywane dalej nagłówkiem) oraz liste znajomych i zaproszeń (wrócimy do niej później).
+Nagłówek składa się z czterech części, ale jeśli któreś z nich nie są potrzebne (np. nie mamy zaproszeń) to nie są one wczytywane.
+<center><img src=./opisyimg/rgscafm_03.png class=no_zoom></center>
+Pierwsza część to 'przycisk awaryjnego odświeżania', nigdy nie wiadomo co się wydarzy, czasem się coś nie wczytam, a czasem R* ma jakiś zamuł albo awarię. Druga część odpowiada za zarządzanie znajomi, trzecia - zaproszeniami, które zostały wysłane przez Ciebie, czwarta - zaproszeniami, które otrzymałeś od innych.
+Skupmy się teraz na drugiej części nagłówka, trzecia jest prawie identyczna, a w czwartej dodałem jedynie możliwość przyjmowania zaproszeń :)
+<center><img src=./opisyimg/rgscafm_04.png class=no_zoom></center>
+Na samym początku znajduje się informacja, jakich osób dana sekcja dotyczy oraz liczbę tych osób.
+Następnie - do dyspozycji są trzy opcję: zaznaczenie wszystkich, odznaczenie wszystkich oraz zaznaczenie tylko tych osób, które nie należą do twoje Ekipy. Skrypt sam rozpoznaje, która Ekipa to ta Twoja :)
+Na samym końcu - jeden przycisk, który usuwa (lub przyjmuje w przypadku sekcji zaproszeń) wszystkich zaznaczonych.
+Lista, poniżej nagłówka składa się z trzech części (list). Odpowiadają one kolejno drugiej, trzeciej i czwartej części nagłówka.
+Warto zwrócić uwagę, że jest ona posortowana w bardzo wygdony dla Ciebie sposób. Na samym szczycie każdej z list, znajdują się osoby spoza twojej Ekipy. Reszta osób to wyłącznie zaufani znajomi. W następnej kolejności, listy są posortowane alfabetycznie, lecz ignorując znaki, które nie są alfanumeryczne (nie są literami, ani cyframi).
+<center><img src=./opisyimg/rgscafm_05.png class=no_zoom style=border-color:skyblue></center>
+Warto również zwrócić uwagę na fakt, że sam możesz zaznaczyć/odznaczyć osoby do usunięcia. <input type=checkbox checked disabled> oznacza osobę do usnięcia, a <input type=checkbox disabled> - osobę, która pozostanie na naszej liście. Przydatna opcja, np. jeśli masz w znajomych tak zwanych 'zaufanych randomów'.
+Gdy już naciśniesz przycisk odpowiadający za usuwanie - dostaniesz ostatnią szansę na wycofanie się. Później odwrotu już nie ma. Oto przykład zapytania przed usunięciem ośmiu znajomych:
+<center><img src=./opisyimg/rgscafm_06.png class=no_zoom></center>
+Jak widzisz, masz ostatnią okazję sprawdzić, których znajomych usuwasz.
+Oczywiście operacja usuwania sporej liczby znajomych może trochę zająć.
+<center><img src=./opisyimg/rgscafm_07.png class=no_zoom></center>
+Dopóki widzisz powyższy komunikat - nie wyłączaj przeglądarki, komputera, bezpieczników... czy co tam Ci przyjdzie do głowy...
+Oczywiście, możesz podejrzeć pracę skryptu w konsoli tak jak to jest napisane w komunikacie.
+<center><img src=./opisyimg/rgscafm_08.png class=no_zoom></center>
+Możesz tam zobaczyć progres, lecz pojawią się też błedy. Na szczęscie nie ma co się bać! Jeśli widzisz polecenia 'Loop!' i 'Token!', tzn. że wszystko działa tak jak powinno.
+Po zakończeniu pracy, ramka zostanie przeładowany i zobaczysz obecny stan listy znajomych i zaproszeń :)
