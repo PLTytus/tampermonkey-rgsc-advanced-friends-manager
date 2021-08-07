@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.3.4
+// @version         2.3.5b
 // @namespace       http://gtaweb.eu/tampermonkey
-// @downloadURL     http://gtaweb.eu/tampermonkey/rgsc_advanced_friends_manager.user.js
-// @updateURL       http://gtaweb.eu/tampermonkey/rgsc_advanced_friends_manager.meta.js
+// @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
+// @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
 // @match           https://*.socialclub.rockstargames.com/*
 // @match           https://socialclub.rockstargames.com/*
 // @grant           none
@@ -599,7 +599,7 @@
             if(location.pathname.match("^\/member\/.+\/friends$")){
                 console.log("WORKING!");
                 // make a view
-                $("html").prepend("<link rel='stylesheet' href='https://gtaweb.eu/tampermonkey/rgsc_advanced_friends_manager.css?2.0.0'>");
+                $("html").prepend("<link rel='stylesheet' href='https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/src/rgsc_advanced_friends_manager.css?2.3.5'>");
                 $("html").prepend("<link rel='stylesheet' href='https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'>");
                 $('body').append("<div id=dialog-confirm></div>");
                 $('body').append('<style>.NavigationTop__wrap__fQdBR { background: black; }</style>');

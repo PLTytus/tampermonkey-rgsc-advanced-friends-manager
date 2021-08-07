@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.3.4
+// @version         2.3.5b
 // @namespace       http://gtaweb.eu/tampermonkey
-// @downloadURL     http://gtaweb.eu/tampermonkey/rgsc_advanced_friends_manager.user.js
-// @updateURL       http://gtaweb.eu/tampermonkey/rgsc_advanced_friends_manager.meta.js
+// @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
+// @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
 // @match           https://*.socialclub.rockstargames.com/*
 // @match           https://socialclub.rockstargames.com/*
 // @grant           none
