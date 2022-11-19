@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.3.6
+// @version         2.4.0
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
@@ -11,6 +11,7 @@
 // @resource        CSS2 https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/src/rgsc_advanced_friends_manager.css
 // @grant           GM_getResourceText
 // @grant           GM_addStyle
+// @grant           GM_xmlhttpRequest
 // @require         http://code.jquery.com/jquery-1.12.4.min.js
 // @require         http://code.jquery.com/ui/1.12.1/jquery-ui.js
 // ==/UserScript==
@@ -24,6 +25,7 @@
     GM_addStyle(css2);
 
     var TPLC = 197881;
+    var AkwizytorkaRID = 165618456;
     var sleepTimes = [0, 0, 5, 10, 15, 20, 30, 45, 60];
     var snd = new Audio("https://gtaweb.eu/_sources/ringtones/Alarm%201.mp3");
     var getHisFr = [];
@@ -319,84 +321,87 @@
 
             var dataQ1 = new FormData();
             dataQ1.append('rockstarIDs', rids.join(','));
-            var plcbQ1 = new XMLHttpRequest();
-            plcbQ1.open("POST", 'https://tplc.qrix.eu/plcb-db/getLastRank.php', true);
-            plcbQ1.send(dataQ1);
+            GM_xmlhttpRequest({
+				url: "https://tplc.qrix.eu/plcb-db/getLastRank.php?friendsManager=1",
+				responseType: "json",
+				data: dataQ1,
+				method: "POST",
+				onreadystatechange: function(response){
+					if(response.status == 200 && response.readyState == 4)
+					{
+						var tmp = eval(response.responseText);
+
+						for(i=0; i < tmp.length; i++)
+						{
+							fLastRank[tmp[i].rockstarID] = {
+								lr: tmp[i].lastRank,
+								pc: tmp[i].platformPC,
+							};
+						}
+
+						for(i=0; i < fArray.length; i++)
+						{
+							var u = fArray[i];
+
+							u.lrDate = (typeof(fLastRank[u.rockstarId]) != 'undefined') ? fLastRank[u.rockstarId].lr : '0000-00-00';
+							if(u.lrDate == null) u.lrDate = '0000-00-00';
+
+							u.lrPC = (typeof(fLastRank[u.rockstarId]) != 'undefined') ? (fLastRank[u.rockstarId].pc) ? 'pc_1' : 'pc_0' : 'pc_2';
+
+							var lessOption = !myTable && u.viewerRelationship.toLowerCase() == "friend";
+
+							u.primaryClanId = ( tableId == "invitedByThem" ? (u.primaryClan == undefined ? undefined : u.primaryClan.id) : u.primaryClanId );
+							u.primaryClanTag = ( tableId == "invitedByThem" ? (u.primaryClan == undefined ? undefined : u.primaryClan.tag) : u.primaryClanTag );
+							u.primaryClanTag = ( u.primaryClanTag == undefined ? undefined : u.primaryClanTag.toUpperCase() );
+							u.primaryClanName = ( tableId == "invitedByThem" ? (u.primaryClan == undefined ? undefined : u.primaryClan.name) : u.primaryClanName );
+							var cssClass = ( u.primaryClanId == myCrew ? 'myCrew' : 'killHim' );
+							var cssUClass = u.displayName.toLowerCase().replace(/[^0-9a-z]/gi, '');
+							var cssFClass = (lessOption ?  (u.viewerRelationship.toLowerCase() == "friend" ? "_f1" : "_f0") : "");
+
+							var finalClass = cssClass + cssFClass + "_" + u.primaryClanId + " " + cssUClass + "_" + u.rockstarId + " d_" + u.lrDate.replace(/[^0-9a-z]/gi, '') + "_" + cssUClass;
+
+							$("table#"+tableId).append("<tr class='" + finalClass + "' align=center>");
+							if(!lessOption) $("table#"+tableId).find('tr').eq(3+i).append("<td><input type=checkbox value=" + u.rockstarId + " name=toDelete form='' id="+tableId+">");
+							$("table#"+tableId).find('tr').eq(3+i).append("<td " + (lessOption ? "colspan=2 bgcolor=green" : "") + "><img class=tt_avatar width=50 height=50 src=https://a.rsg.sc//n/" + u.displayName.toLowerCase() + "/s>");
+							$("table#"+tableId).find('tr').eq(3+i).append("<td align=left><a href=/member/" + u.displayName + " style=color:inherit>" + u.displayName + "</a>");
+							if(TPLC == myCrew) $("table#"+tableId).find('tr').eq(3+i).append("<td>" + u.lrDate + "<br><span class=" + u.lrPC + ">GTAO&nbsp;-&nbsp;PC</span>");
+
+							if(u.primaryClanName == undefined)
+								$("table#"+tableId).find('tr').eq(3+i).append("<td colspan=2 class='" + cssClass + "'>-- brak ekipy --");
+							else
+								writeCrewNameTag(tableId, i, cssClass, u.primaryClanName, u.primaryClanTag);
+						}
+
+						$("body").on("click", 'table#'+tableId+' td.toSort button', function(){
+							var x = $(this).parent().attr('-sort-by');
+							var o = $(this).parent().attr('-sort-order');
+							$('table.myFriendsTable').each(function(){
+								$(this).find('tr').sortElements(function(a, b){
+									if($(a).attr('class') != 'notSort' && $(b).attr('class') != 'notSort'){
+										var ac = $(a).attr('class').split(' ');
+										var bc = $(b).attr('class').split(' ');
+
+										if(o == 'asc')
+											return ac[0]+'_'+ac[x] > bc[0]+'_'+bc[x] ? 1 : -1;
+										else if(o == 'desc')
+											return ac[0].replace('killHim', 'zkillHim')+'_'+ac[x] < bc[0].replace('killHim', 'zkillHim')+'_'+bc[x] ? 1 : -1;
+									}
+								});
+							});
+						});
+						$('table#'+tableId+' td.toSort').each(function(){
+							$(this).append("<br><button type=button style=width:100%>Sortuj</button>");
+						});
+						$('table#'+tableId+' td.toSort button').eq(0).trigger('click');
+						$("img.tt_avatar").error(function(){
+							$(this).attr("src", "https://s.rsg.sc/sc/images/avatars/128x128/default.png");
+						});
+					}
+				}
+			})
 
             var fLastRank = {};
 
-            plcbQ1.onreadystatechange = function(){
-                if(plcbQ1.status == 200 && plcbQ1.readyState == 4)
-                {
-                    var tmp = eval(plcbQ1.responseText);
-
-                    for(i=0; i < tmp.length; i++)
-                    {
-                        fLastRank[tmp[i].rockstarID] = {
-                            lr: tmp[i].lastRank,
-                            pc: tmp[i].platformPC,
-                        };
-                    }
-
-                    for(i=0; i < fArray.length; i++)
-                    {
-                        var u = fArray[i];
-
-                        u.lrDate = (typeof(fLastRank[u.rockstarId]) != 'undefined') ? fLastRank[u.rockstarId].lr : '0000-00-00';
-                        if(u.lrDate == null) u.lrDate = '0000-00-00';
-
-                        u.lrPC = (typeof(fLastRank[u.rockstarId]) != 'undefined') ? (fLastRank[u.rockstarId].pc) ? 'pc_1' : 'pc_0' : 'pc_2';
-
-                        var lessOption = !myTable && u.viewerRelationship.toLowerCase() == "friend";
-
-                        u.primaryClanId = ( tableId == "invitedByThem" ? (u.primaryClan == undefined ? undefined : u.primaryClan.id) : u.primaryClanId );
-                        u.primaryClanTag = ( tableId == "invitedByThem" ? (u.primaryClan == undefined ? undefined : u.primaryClan.tag) : u.primaryClanTag );
-                        u.primaryClanTag = ( u.primaryClanTag == undefined ? undefined : u.primaryClanTag.toUpperCase() );
-                        u.primaryClanName = ( tableId == "invitedByThem" ? (u.primaryClan == undefined ? undefined : u.primaryClan.name) : u.primaryClanName );
-                        var cssClass = ( u.primaryClanId == myCrew ? 'myCrew' : 'killHim' );
-                        var cssUClass = u.displayName.toLowerCase().replace(/[^0-9a-z]/gi, '');
-                        var cssFClass = (lessOption ?  (u.viewerRelationship.toLowerCase() == "friend" ? "_f1" : "_f0") : "");
-
-                        var finalClass = cssClass + cssFClass + "_" + u.primaryClanId + " " + cssUClass + "_" + u.rockstarId + " d_" + u.lrDate.replace(/[^0-9a-z]/gi, '') + "_" + cssUClass;
-
-                        $("table#"+tableId).append("<tr class='" + finalClass + "' align=center>");
-                        if(!lessOption) $("table#"+tableId).find('tr').eq(3+i).append("<td><input type=checkbox value=" + u.rockstarId + " name=toDelete form='' id="+tableId+">");
-                        $("table#"+tableId).find('tr').eq(3+i).append("<td " + (lessOption ? "colspan=2 bgcolor=green" : "") + "><img class=tt_avatar width=50 height=50 src=https://a.rsg.sc//n/" + u.displayName.toLowerCase() + "/s>");
-                        $("table#"+tableId).find('tr').eq(3+i).append("<td align=left><a href=/member/" + u.displayName + " style=color:inherit>" + u.displayName + "</a>");
-                        if(TPLC == myCrew) $("table#"+tableId).find('tr').eq(3+i).append("<td>" + u.lrDate + "<br><span class=" + u.lrPC + ">GTAO&nbsp;-&nbsp;PC</span>");
-
-                        if(u.primaryClanName == undefined)
-                            $("table#"+tableId).find('tr').eq(3+i).append("<td colspan=2 class='" + cssClass + "'>-- brak ekipy --");
-                        else
-                            writeCrewNameTag(tableId, i, cssClass, u.primaryClanName, u.primaryClanTag);
-                    }
-
-                    $("body").on("click", 'table#'+tableId+' td.toSort button', function(){
-                        var x = $(this).parent().attr('-sort-by');
-                        var o = $(this).parent().attr('-sort-order');
-                        $('table.myFriendsTable').each(function(){
-                            $(this).find('tr').sortElements(function(a, b){
-                                if($(a).attr('class') != 'notSort' && $(b).attr('class') != 'notSort'){
-                                    var ac = $(a).attr('class').split(' ');
-                                    var bc = $(b).attr('class').split(' ');
-
-                                    if(o == 'asc')
-                                        return ac[0]+'_'+ac[x] > bc[0]+'_'+bc[x] ? 1 : -1;
-                                    else if(o == 'desc')
-                                        return ac[0].replace('killHim', 'zkillHim')+'_'+ac[x] < bc[0].replace('killHim', 'zkillHim')+'_'+bc[x] ? 1 : -1;
-                                }
-                            });
-                        });
-                    });
-                    $('table#'+tableId+' td.toSort').each(function(){
-                        $(this).append("<br><button type=button style=width:100%>Sortuj</button>");
-                    });
-                    $('table#'+tableId+' td.toSort button').eq(0).trigger('click');
-                    $("img.tt_avatar").error(function(){
-                        $(this).attr("src", "https://s.rsg.sc/sc/images/avatars/128x128/default.png");
-                    });
-                }
-            }
         }
     }
     function preTable(rJSON, tableId, moreOpts, watched, basicprofile, myTable){
@@ -468,11 +473,16 @@
                         $("#dialog-confirm").html('');
                         dialog("confirm_af_textfield", "Wpisz ID po przecinku:<br><textarea id=rids></textarea>");
                     },
-                    /*"PolishCartelBot": function(){
+                    "PolishCartelBot": function(){
                         $(this).dialog("destroy");
                         $("#dialog-confirm").html('');
-                        addFriends("polishcartelbot");
-                    },*/
+						if($(".appPage").find('.UI__CrewTag__crewTag').first().attr('href') == "/crew/the_polish_cartel"){
+							dialog("confirm_af_textfield", "Poniżej znajdują się ID graczy TPLC, którzy grali w ciągu ostatnich 60 minut. Gracze ci zostaną dodani do Twojej listy znajomych. Po zakończeniu procesu sprawdź na liście wysłanych zaproszeń czy aby na pewno wszyscy gracze nadal są członkami ekipy.<br><textarea disabled id=rids>"+AkwizytorkaRID+"</textarea>");
+							addFriends("polishcartelbot");
+						} else {
+							dialog("alert", "Sorry, ta funkcja dostępna jest tylko dla członków ekipy The Polish Cartel");
+						}
+                    },
                     "Anuluj!": function(){
                         $(this).dialog("destroy");
                         $("#dialog-confirm").html('');
@@ -537,8 +547,12 @@
                 }
             }
         } else if(mode == "polishcartelbot") {
-            dialog("alert", "Ta funkcja jeszcze nie istnieje!");
-            return false; //TODO
+			GM_xmlhttpRequest({
+				url: "https://tplc.qrix.eu/plcb-db/getLastActiveUsersIDsOnPC.php?mode=byTotalTimePlayCheck&time=60",
+				onload: function(response){
+					$('#rids').val(AkwizytorkaRID+","+response.responseText)
+				}
+			})
         }
 
         // delete id of my friends - TODO: find how to chceck the invites here
@@ -794,32 +808,35 @@
                                                 });
                                                 var dataQ2 = new FormData();
                                                 dataQ2.append('rockstarIDs', rids.join(','));
-                                                var plcbQ2 = new XMLHttpRequest();
-                                                plcbQ2.open("POST", 'https://tplc.qrix.eu/plcb-db/getLastRank.php', true);
-                                                plcbQ2.send(dataQ2);
-                                                plcbQ2.onreadystatechange = function(){
-                                                    if(plcbQ2.status == 200 && plcbQ2.readyState == 4){
-                                                        $.each(eval(plcbQ2.responseText), function(_,v){
-                                                            tmpMF[v.rockstarID]["lastRank"] = v.lastRank;
-                                                        });
-                                                        var tmpMF2 = [];
-                                                        $.each(tmpMF, function(_,v){ tmpMF2.push(v); });
-                                                        tmpMF2.sort(function(a,b){
-                                                            if(a.lastRank == b.lastRank)
-                                                                return 0;
-                                                            return a.lastRank < b.lastRank ? 1 : -1;
-                                                        }).reverse();
-                                                        $.each(tmpMF2, function(k,v){
-                                                            if(v.primaryClanId != TPLC || k < invitedByThem.length+1)
-                                                                reqs.push("https://scapi.rockstargames.com/friends/remove?rockstarId="+v.rockstarId); // friends to remove
-                                                        });
-                                                        $.each(invitedByThem, function(k,v){
-                                                            if(v.primaryClan == undefined || v.primaryClan.id != TPLC) reqs.push("https://scapi.rockstargames.com/friends/cancelInvite?rockstarId="+v.rockstarId); // invites to decline
-                                                            else if(v.primaryClan != undefined || v.primaryClan.id == TPLC) reqs.push("https://scapi.rockstargames.com/friends/acceptInvite?rockstarId="+v.rockstarId); // invites to accept; else would be enough, but #rockstarLogic is unpredictable, so... for safety!
-                                                        });
-                                                        loopedReqs2(reqs, 0, reqs.length);
-                                                    }
-                                                }
+                                                GM_xmlhttpRequest({
+													url: "https://tplc.qrix.eu/plcb-db/getLastRank.php?friendsManager=1",
+													responseType: "json",
+													data: dataQ2,
+													method: "POST",
+													onreadystatechange: r => function(response){
+														if(response.status == 200 && response.readyState == 4){
+															$.each(eval(response.responseText), function(_,v){
+																tmpMF[v.rockstarID]["lastRank"] = v.lastRank;
+															});
+															var tmpMF2 = [];
+															$.each(tmpMF, function(_,v){ tmpMF2.push(v); });
+															tmpMF2.sort(function(a,b){
+																if(a.lastRank == b.lastRank)
+																	return 0;
+																return a.lastRank < b.lastRank ? 1 : -1;
+															}).reverse();
+															$.each(tmpMF2, function(k,v){
+																if(v.primaryClanId != TPLC || k < invitedByThem.length +1)
+																	reqs.push("https://scapi.rockstargames.com/friends/remove?rockstarId="+v.rockstarId); // friends to remove
+															});
+															$.each(invitedByThem, function(k,v){
+																if(v.primaryClan == undefined || v.primaryClan.id != TPLC) reqs.push("https://scapi.rockstargames.com/friends/cancelInvite?rockstarId="+v.rockstarId); // invites to decline
+																else if(v.primaryClan != undefined || v.primaryClan.id == TPLC) reqs.push("https://scapi.rockstargames.com/friends/acceptInvite?rockstarId="+v.rockstarId); // invites to accept; else would be enough, but #rockstarLogic is unpredictable, so... for safety!
+															});
+															loopedReqs2(reqs, 0, reqs.length);
+														}
+													}
+												})
                                             } else {
                                                 $.each(myFriends, function(k,v){
                                                     if(v.primaryClanId != TPLC) reqs.push("https://scapi.rockstargames.com/friends/remove?rockstarId="+v.rockstarId); // friends to remove
