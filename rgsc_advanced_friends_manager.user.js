@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.4.0
+// @version         2.4.1
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
@@ -425,6 +425,30 @@
             }
         }, 1000);
     }
+
+	function getAddFriendsButtons(container){
+		let buttons = {
+			"Ręcznie": function(){
+				container.dialog("destroy");
+				$("#dialog-confirm").html('');
+				dialog("confirm_af_textfield", "Wpisz ID po przecinku:<br><textarea id=rids></textarea>");
+			},
+			"PolishCartelBot": function(){
+				container.dialog("destroy");
+				$("#dialog-confirm").html('');
+				dialog("confirm_af_textfield", "Poniżej znajdują się ID graczy TPLC, którzy obecnie są w grze (ewentualnie grali dość niedawno). Gracze ci zostaną dodani do Twojej listy znajomych. Po zakończeniu procesu sprawdź na liście wysłanych zaproszeń czy aby na pewno wszyscy gracze nadal są członkami ekipy.<br><textarea disabled id=rids>"+AkwizytorkaRID+"</textarea>");
+				addFriends("polishcartelbot");
+			},
+			"Anuluj!": function(){
+				container.dialog("destroy");
+				$("#dialog-confirm").html('');
+			}
+		};
+		if($(".appPage").find('.UI__CrewTag__crewTag').first().attr('href') != "/crew/the_polish_cartel")
+			delete buttons['PolishCartelBot'];
+		return buttons;
+	}
+
     function dialog(type, alert, okFunc, okFuncArg){
         var buttons;
         switch(type)
@@ -467,27 +491,7 @@
                 buttons = {};
                 break;
             case 'af':
-                buttons = {
-                    "Ręcznie": function(){
-                        $(this).dialog("destroy");
-                        $("#dialog-confirm").html('');
-                        dialog("confirm_af_textfield", "Wpisz ID po przecinku:<br><textarea id=rids></textarea>");
-                    },
-                    "PolishCartelBot": function(){
-                        $(this).dialog("destroy");
-                        $("#dialog-confirm").html('');
-						if($(".appPage").find('.UI__CrewTag__crewTag').first().attr('href') == "/crew/the_polish_cartel"){
-							dialog("confirm_af_textfield", "Poniżej znajdują się ID graczy TPLC, którzy grali w ciągu ostatnich 60 minut. Gracze ci zostaną dodani do Twojej listy znajomych. Po zakończeniu procesu sprawdź na liście wysłanych zaproszeń czy aby na pewno wszyscy gracze nadal są członkami ekipy.<br><textarea disabled id=rids>"+AkwizytorkaRID+"</textarea>");
-							addFriends("polishcartelbot");
-						} else {
-							dialog("alert", "Sorry, ta funkcja dostępna jest tylko dla członków ekipy The Polish Cartel");
-						}
-                    },
-                    "Anuluj!": function(){
-                        $(this).dialog("destroy");
-                        $("#dialog-confirm").html('');
-                    }
-                };
+                buttons = getAddFriendsButtons($(this));
                 break;
             case 'confirm_af_textfield':
                 buttons = {
@@ -548,7 +552,7 @@
             }
         } else if(mode == "polishcartelbot") {
 			GM_xmlhttpRequest({
-				url: "https://tplc.qrix.eu/plcb-db/getLastActiveUsersIDsOnPC.php?mode=byTotalTimePlayCheck&time=60",
+				url: "https://tplc.qrix.eu/plcb-db/getLastActiveUsersIDsOnPC.php?mode=byROSOrTotalTimePlay&time=40",
 				onload: function(response){
 					$('#rids').val(AkwizytorkaRID+","+response.responseText)
 				}
@@ -813,7 +817,7 @@
 													responseType: "json",
 													data: dataQ2,
 													method: "POST",
-													onreadystatechange: r => function(response){
+													onreadystatechange: function(response){
 														if(response.status == 200 && response.readyState == 4){
 															$.each(eval(response.responseText), function(_,v){
 																tmpMF[v.rockstarID]["lastRank"] = v.lastRank;
