@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.4.1
+// @version         2.4.2
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
@@ -27,11 +27,11 @@
     var TPLC = 197881;
     var AkwizytorkaRID = 165618456;
     var sleepTimes = [0, 0, 5, 10, 15, 20, 30, 45, 60];
-    var snd = new Audio("https://gtaweb.eu/_sources/ringtones/Alarm%201.mp3");
+    // var snd = new Audio("https://gtaweb.eu/_sources/ringtones/Alarm%201.mp3");
     var getHisFr = [];
-    snd.loop = false;
-    snd.autoplay = false;
-    snd.volume = 0.15;
+    // snd.loop = false;
+    // snd.autoplay = false;
+    // snd.volume = 0.15;
 
     jQuery.fn.sortElements = (function(){
         var sort = [].sort;
@@ -602,7 +602,7 @@
                 $(this).find('div.val').text($(this).progressbar("option", "value") + '/' + $(this).progressbar("option", "max"));
             },
             complete: function(){
-                snd.play();
+                // snd.play();
                 $(this).find('div.val').text('Gotowe!');
                 $("#dialog-confirm").dialog("option", "buttons", {
                     'Kontynuj!': function(){
