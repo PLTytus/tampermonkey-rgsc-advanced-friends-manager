@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.4.2
+// @version         2.4.3
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://bitbucket.org/PLTytus/rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
@@ -329,7 +329,7 @@
 				onreadystatechange: function(response){
 					if(response.status == 200 && response.readyState == 4)
 					{
-						var tmp = eval(response.responseText);
+						var tmp = JSON.parse(response.responseText);
 
 						for(i=0; i < tmp.length; i++)
 						{
@@ -417,11 +417,11 @@
     }
     function preLoad(){
         var loadInf = setInterval(function(){
-            if($("div.Friends__wrap__1WLHZ").length != 0 && $("div.Friends__card__1i73B").length != 0){
+            if($("div.Friends__wrap__ZsxgT").length != 0 && $("div.Friends__card__knFc4").length != 0){
                 clearInterval(loadInf);
-                $("div.Friends__wrap__1WLHZ").css("text-align", "center");
-                $("div.Friends__card__1i73B").hide();
-                $("div.Friends__wrap__1WLHZ").append("<div id=friendsTTables class='Friends__card__1i73B UI__Card__card UI__Card__shadow'><p></p><p style=max-width:unset><b>Loading...</b></p></div>");
+                $("div.Friends__wrap__ZsxgT").css("text-align", "center");
+                $("div.Friends__card__knFc4").hide();
+                $("div.Friends__wrap__ZsxgT").append("<div id=friendsTTables class='Friends__card__knFc4 UI__Card__card UI__Card__shadow'><p></p><p style=max-width:unset><b>Loading...</b></p></div>");
             }
         }, 1000);
     }
@@ -440,8 +440,9 @@
 				addFriends("polishcartelbot");
 			},
 			"Anuluj!": function(){
-				container.dialog("destroy");
+				$(this).dialog("destroy");
 				$("#dialog-confirm").html('');
+				$("#addF_button").prop("disabled", false);
 			}
 		};
 		if($(".appPage").find('.UI__CrewTag__crewTag').first().attr('href') != "/crew/the_polish_cartel")
@@ -463,6 +464,7 @@
                     "Anuluj!": function(){
                         $(this).dialog("destroy");
                         $("#dialog-confirm").html('');
+						$("#addF_button").prop("disabled", false);
                     }
                 };
                 break;
@@ -476,6 +478,7 @@
                     "Anuluj!": function(){
                         $(this).dialog("destroy");
                         $("#dialog-confirm").html('');
+						$("#addF_button").prop("disabled", false);
                     }
                 };
                 break;
@@ -504,6 +507,7 @@
                     "Anuluj!": function(){
                         $(this).dialog("destroy");
                         $("#dialog-confirm").html('');
+						$("#addF_button").prop("disabled", false);
                     }
                 };
                 break;
@@ -627,17 +631,23 @@
                 // make a view
                 $('body').append("<div id=dialog-confirm></div>");
                 $('body').append('<style>.NavigationTop__wrap__fQdBR { background: black; }</style>');
-                $('body').prepend('<div id=tytusowe_buttony class=m></div>');
+                $('body').prepend('<div id=tytusowe_buttony class="m ProfileHeader__navInner__b00gF"></div>');
+				
+				var menuWithButtonsInterval = setInterval(function() {
+					if($(".Friends__wrap__ZsxgT").length){
+						$(".Friends__wrap__ZsxgT").prepend($("#tytusowe_buttony"));
+						$("#tytusowe_buttony").show();
+						clearInterval(menuWithButtonsInterval);
+					}
+				}, 1000);
+			
                 $('div#tytusowe_buttony.m').css({
-                    'margin': '60px 0 0',
                     'padding': '10px 20px',
                     'background': '#ffc8c8',
                     'border-bottom': '2px #000000 solid',
-                    'position': 'sticky',
-                    'z-index': '999',
-                    'top': '60px',
+                    'position': 'relative',
                     'width': '100%',
-                    'text-align': 'right',
+                    'display': 'none',
                 });
                 var dtime = 10;
                 $('div#tytusowe_buttony.m').append('<button disabled type=button id=smode_button class="getFriendsFiltered UI__Button-socialclub__btn UI__Button-socialclub__ghost UI__Button-socialclub__medium" onclick="return false;" style=margin-top:3px>Zmień widok</button>');
@@ -645,11 +655,12 @@
                 $("body").on("mouseover", "button#addF_button, button#smode_button", function(){ $(this).css('background', 'grey'); });
                 $("body").on("mouseout", "button#addF_button, button#smode_button", function(){  $(this).css('background', 'white'); });
                 $("button#addF_button, button#smode_button").css('background', 'white');
-                setInterval(function(){
+                var timerForButton = setInterval(function(){
                     $("button#addF_button span.dtime").text(" ("+--dtime+")");
                     if(dtime <= 0){
                         $("button#addF_button span.dtime").text("");
-                        $("button#addF_button").prop("disabled", false);
+						$("#addF_button").prop("disabled", false);
+						clearInterval(timerForButton);
                     }
                 }, 1000);
                 $('div#tytusowe_buttony.m').append('&nbsp;<button type=button id=rl_button class="getFriendsFiltered UI__Button-socialclub__btn UI__Button-socialclub__success UI__Button-socialclub__medium" onclick="location.reload();">ODŚWIEŻ!</button>');
@@ -665,6 +676,7 @@
                     var moreOpts = watched == me;
                     if(moreOpts){
                         $("body").on("click", "button#addF_button", function(){
+							$("#addF_button").prop("disabled", true);
                             dialog("af", "W jaki spsób chcesz przekazać listę osób (ich ID), do których chcesz wysłać zaproszenie?");
                         });
                         myFriends = scapiReq("GET", "https://scapi.rockstargames.com/friends/getFriendsFiltered?onlineService=sc&nickname=&pageIndex=0&pageSize=250").success(function(){
@@ -690,6 +702,7 @@
                         });
                     } else {
                         $("body").on("click", "button#addF_button", function(){
+							$("#addF_button").prop("disabled", true);
                             dialog("confirm-location", "Z tej opcji można skorzystać tylko z poziomu twojej listy znajomych!<br><br>Chesz do niej przejśc?", "/member/"+me+"/friends");
                         });
                          myFriends = scapiReq("GET", "https://scapi.rockstargames.com/profile/getprofile?nickname="+watched+"&maxFriends=0").success(function(){
@@ -703,7 +716,7 @@
                 });
                 // make this really work
                 $("body").on("click", "button#smode_button", function(){
-                    $("div.Friends__card__1i73B").toggle();
+                    $("div.Friends__card__knFc4").toggle();
                 });
                 $("body").on("click", "button#fMainSelector", function(){
                     $('table#'+this.className.substr(10)+' input[type="checkbox"]').each(function(){
@@ -819,7 +832,7 @@
 													method: "POST",
 													onreadystatechange: function(response){
 														if(response.status == 200 && response.readyState == 4){
-															$.each(eval(response.responseText), function(_,v){
+															$.each(JSON.parse(response.responseText), function(_,v){
 																tmpMF[v.rockstarID]["lastRank"] = v.lastRank;
 															});
 															var tmpMF2 = [];
