@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.4.4
+// @version         2.4.5
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://github.com/PLTytus/tampermonkey-rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://github.com/PLTytus/tampermonkey-rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
@@ -362,7 +362,7 @@
 
 							$("table#"+tableId).append("<tr class='" + finalClass + "' align=center>");
 							if(!lessOption) $("table#"+tableId).find('tr').eq(3+i).append("<td><input type=checkbox value=" + u.rockstarId + " name=toDelete form='' id="+tableId+">");
-							$("table#"+tableId).find('tr').eq(3+i).append("<td " + (lessOption ? "colspan=2 bgcolor=green" : "") + "><img class=tt_avatar width=50 height=50 src=https://a.rsg.sc//n/" + u.displayName.toLowerCase() + "/s>");
+							$("table#"+tableId).find('tr').eq(3+i).append("<td " + (lessOption ? "colspan=2 bgcolor=green" : "") + "><img class=tt_avatar width=50 height=50 src=https://scapi.rockstargames.com/avatars/get?nickname=" + u.displayName.toLowerCase() + "&imageSize=s>");
 							$("table#"+tableId).find('tr').eq(3+i).append("<td align=left><a href=/member/" + u.displayName + " style=color:inherit>" + u.displayName + "</a>");
 							if(TPLC == myCrew) $("table#"+tableId).find('tr').eq(3+i).append("<td>" + u.lrDate + "<br><span class=" + u.lrPC + ">GTAO&nbsp;-&nbsp;PC</span>");
 

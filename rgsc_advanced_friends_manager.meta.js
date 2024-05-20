@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            RGSC Advanced Friends Manager
 // @author          PLTytus
-// @version         2.4.4
+// @version         2.4.5
 // @namespace       http://gtaweb.eu/tampermonkey
 // @downloadURL     https://github.com/PLTytus/tampermonkey-rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.user.js
 // @updateURL       https://github.com/PLTytus/tampermonkey-rgsc-advanced-friends-manager/raw/master/rgsc_advanced_friends_manager.meta.js
